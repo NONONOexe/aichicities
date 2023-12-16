@@ -1,0 +1,120 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+
+devtools::load_all()
+```
+
+# aichicities
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+aichicities is package provides the Aichi Prefecture administrative area data in an easy-to-use format in R.
+These data are provided by the [National Land Information System](https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_1.html).
+This package uses data in 2023 (Reiwa 5).
+
+> aichicitiesは愛知県の行政区域データをRで扱いやすい形式で提供するパッケージです。
+> これらのデータは[国土数値情報ダウンロードサービス](https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_1.html)によって提供されています。
+> なお、このパッケージでは令和5年のデータを使用しています。
+
+## Installation
+
+You can install the development version of aichicities like so:
+
+> aichicitiesの開発版は以下のようにインストールできます。
+
+``` r
+install.packages("remotes")
+remotes::install_github("NONONOexe/aichicities")
+```
+
+## Usage
+
+Load the package as follows:
+
+> パッケージを以下のように読み込みます。
+
+```{r load_library, eval=FALSE}
+library(aichicities)
+```
+
+### Show district information
+
+The package provides administrative district information in 2023 into `tibble` format.
+You can show all the information as follows:
+
+> このパッケージは2023年の行政区域データを`tibble`形式で提供します。
+> 以下のようにして全ての情報を表示することができます。
+
+```{r show_data}
+aichi_districts
+```
+
+The package already provides the data, but you can also download 
+the original data using `download_aichi_district_data()` or
+read this using `read_aichi_district_data()`.
+
+> このパッケージではデータをすでに提供していますが、
+> もとのデータを`download_aichi_district_data()`を使ってダウンロードしたり、
+> `read_aichi_district_data()`を使って読み込むこともできます。
+
+### Search districts
+
+You can search the district information by part of the city name.
+The search is available in both English and Japanese as follows:
+
+> 市区町村の名前の一部から行政区域情報を検索することができます。
+> この検索は次のように日本語と英語の両方に対応しています。
+
+```{r search_districts}
+# Search districts by part of city name (en)
+find_districts("Toyota")
+
+# Search districts by part of city name (jp)
+find_districts("瀬戸")
+```
+
+### Plot administrative districts
+
+You can easily create a map of Aichi Prefecture using the package.
+The following code shows an example of creating a map of the entire Aichi Prefecture and Nagoya City.
+
+> このパッケージを使って愛知県の地図を簡単に作成することができます。
+> 以下のコードは愛知県全体と名古屋市の地図を作成する例を示しています。
+
+```{r plot_districts}
+# Plot the all administrative districts of the entire Aichi Prefecture
+plot(aichi_districts["geom"])
+# Plot the administrative districts of Nagoya by size of area
+plot(find_districts("Nagoya")["area"])
+```
+
+## Similar projects
+
+- [uribo/jpndistrict](https://github.com/uribo/jpndistrict)
+- [cran/NipponMap](https://github.com/cran/NipponMap)
+
+## License
+
+This project is licensed under the [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
+
+> このプロジェクトは[クリエイティブ・コモンズ 表示 4.0 国際 ライセンス](https://creativecommons.org/licenses/by/4.0/deed.ja)に従います。
+
+## Code of Conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
+By participating in this project you agree to abide by its terms.
+
+> このプロジェクトは[行動規範](.github/CODE_OF_CONDUCT.md)を設けています。
+> したがって、このプロジェクトでは参加者にこの行動規範に従うことを求めます。

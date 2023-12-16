@@ -1,0 +1,5 @@
+devtools::load_all()
+file <- download_aichi_district_data("data-raw")
+aichi_districts <- read_aichi_district_data(file)
+unlink(file)
+usethis::use_data(aichi_districts, overwrite = TRUE)
