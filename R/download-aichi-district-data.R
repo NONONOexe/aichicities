@@ -15,13 +15,13 @@ download_aichi_district_data <- function(download_dir = getwd()) {
   destfile <- file.path(download_dir, basename(url))
 
   if (file.exists(destfile)) {
-    cli_alert_warning("The file {.path {destfile}} already exists")
-    cli_alert_info("Skip downloading")
+    cli::cli_alert_warning("The file {.path {destfile}} already exists")
+    cli::cli_alert_info("Skip downloading")
     return(invisible(destfile))
   }
 
-  downloaded_file_path <- curl_download(url, destfile)
-  cli_alert_success("Downloaded the file {.path {downloaded_file_path}}")
+  downloaded_file_path <- curl::curl_download(url, destfile)
+  cli::cli_alert_success("Downloaded the file {.path {downloaded_file_path}}")
 
   return(invisible(downloaded_file_path))
 }

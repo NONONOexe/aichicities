@@ -22,11 +22,11 @@
 #' }
 read_aichi_district_data <- function(file) {
   # Unzip the file.
-  cli_progress_step("Unzipping the file into {.path {tempdir()}}")
-  unzipped_path <- unzip(file, exdir = tempdir())
+  cli::cli_progress_step("Unzipping the file into {.path {tempdir()}}")
+  unzipped_path <- utils::unzip(file, exdir = tempdir())
 
   # Data frame of city names.
-  city_names <- tibble(
+  city_names <- tibble::tibble(
     "city_code" = c("23101", "23102", "23103", "23104", "23105", "23106",
                     "23107", "23108", "23109", "23110", "23111", "23112",
                     "23113", "23114", "23115", "23116", "23201", "23202",
@@ -66,21 +66,29 @@ read_aichi_district_data <- function(file) {
 
   # Create a data frame of city names and codes.
   shp_data_path <- unzipped_path[endsWith(unzipped_path, ".shp")]
-  cli_progress_step("Reading the district data into a tibble")
-  aichi_districts <- shp_data_path |>
-    read_sf(options = "ENCODING=CP932", stringsAsFactors = FALSE) |>
-    transmute(city_code  = .data$N03_007,
-              city_kanji = str_trim(str_c(str_replace_na(.data$N03_002, ""),
-                                          str_replace_na(.data$N03_003, ""),
-                                          str_replace_na(.data$N03_004, ""),
-                                          sep = " "))) |>
-    group_by(.data$city_code, .data$city_kanji) |>
-    summarise(geom = st_union(.data$geometry), .groups = "drop") |>
-    inner_join(city_names, by = join_by("city_code")) |>
-    mutate(area = st_area(.data$geom)) |>
-    arrange(.data$city_code) |>
-    relocate("city_code", "city", "city_kanji", "area") |>
-    st_transform(crs = 4326)
+  cli::cli_progress_step("Reading the district data into a tibble")
+  aichi_districts <- shp_data_path %>%
+    sf::read_sf(options = "ENCODING=CP932", stringsAsFactors = FALSE) %>%
+    dplyr::transmute(
+      city_code  = .data$N03_007,
+      city_kanji = stringr::str_trim(
+        stringr::str_c(
+          stringr::str_replace_na(.data$N03_002, ""),
+          stringr::str_replace_na(.data$N03_003, ""),
+          stringr::str_replace_na(.data$N03_004, ""),
+          sep = " ")
+      )
+    ) %>%
+    dplyr::group_by(.data$city_code, .data$city_kanji) %>%
+    dplyr::summarise(
+      geom = sf::st_union(.data$geometry),
+      .groups = "drop"
+    ) %>%
+    dplyr::inner_join(city_names, by = dplyr::join_by("city_code")) %>%
+    dplyr::mutate(area = sf::st_area(.data$geom)) %>%
+    dplyr::arrange(.data$city_code) %>%
+    dplyr::relocate("city_code", "city", "city_kanji", "area") %>%
+    sf::st_transform(crs = 4326)
 
   return(aichi_districts)
 }
