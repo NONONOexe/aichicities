@@ -12,14 +12,12 @@
 #' toyota_districts <- find_districts("Toyota-shi")
 #' }
 find_districts <- function(city_name) {
-  utils::data("aichi_districts", package = "aichicities", envir = environment())
-
   res <- stringr::str_like(
-    aichi_districts$city,
+    aichicities::aichi_districts$city,
     paste0(".*", city_name, ".*")
   )
   if (any(res)) {
-    return(aichicities::aichi_districts[res, ])
+    return(aichi_districts[res, ])
   }
 
   res <- stringr::str_like(
@@ -27,7 +25,7 @@ find_districts <- function(city_name) {
     paste0(".*", city_name, ".*")
   )
   if (any(res)) {
-    return(aichicities::aichi_districts[res, ])
+    return(aichi_districts[res, ])
   }
 
   cli::cli_alert_info("There was no district with the specified name: {city_name}")
