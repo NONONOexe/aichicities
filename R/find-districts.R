@@ -12,22 +12,27 @@
 #' toyota_districts <- find_districts("Toyota-shi")
 #' }
 find_districts <- function(city_name) {
-  res <- stringr::str_like(
-    aichicities::aichi_districts$city,
-    paste0(".*", city_name, ".*")
+  data("aichi_districts", package = "aichicities", envir = environment())
+  pattern <- paste0(".*", city_name, ".*")
+
+  matches_city_name <- purrr::map(
+    pattern,
+    stringr::str_like,
+    string = aichi_districts$city
   )
-  if (any(res)) {
-    return(aichi_districts[res, ])
+  matches_city_kanji <- purrr::map(
+    pattern,
+    stringr::str_like,
+    string = aichi_districts$city_kanji
+  )
+
+  matches_districts <- c(matches_city_name, matches_city_kanji) %>%
+    purrr::reduce(`|`)
+
+  if (!any(matches_districts)) {
+    cli::cli_alert_info("There was no district with the specified name: {city_name}")
+    return(NULL)
   }
 
-  res <- stringr::str_like(
-    aichicities::aichi_districts$city_kanji,
-    paste0(".*", city_name, ".*")
-  )
-  if (any(res)) {
-    return(aichi_districts[res, ])
-  }
-
-  cli::cli_alert_info("There was no district with the specified name: {city_name}")
-  return(NULL)
+  return(aichi_districts[matches_districts, ])
 }
